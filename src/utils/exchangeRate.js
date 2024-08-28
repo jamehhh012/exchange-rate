@@ -10,7 +10,8 @@ const updateExchangeRate = (inCountry, outCountry) => {
     // 生成一个在 0.1 到 5 之间的随机汇率
     const minRate = 0.1;
     const maxRate = 5;
-    const randomRate = Math.random() * (maxRate - minRate) + minRate;
+    let randomRate = Math.random() * (maxRate - minRate) + minRate;
+    randomRate = randomRate.toFixed(6)
     return randomRate
 }
 const formatterAmount = (value) => {

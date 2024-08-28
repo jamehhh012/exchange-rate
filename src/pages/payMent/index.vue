@@ -14,12 +14,19 @@
           <moneyInput @changeInput="changeAmountInput"></moneyInput>
         </div>
       </el-card>
-      <div>
-        <p class="tip">
-          汇率
-          <el-tag type="danger">{{ time }}</el-tag>
-          秒后更新
-        </p>
+      <div style="display: flex; justify-content: space-between">
+        <div>
+          <p class="tip">
+            汇率
+            <el-tag type="danger">{{ time }}</el-tag>
+            秒后更新
+          </p>
+        </div>
+        <div>
+          <p class="tip" v-if="countryInput && outCountry.value">
+            1 {{ countryInput }} = {{ exchangeRate }} {{ outCountry.value }}
+          </p>
+        </div>
       </div>
       <p class="tip">你付款的金额</p>
       <el-card>
