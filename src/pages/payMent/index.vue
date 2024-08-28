@@ -15,7 +15,11 @@
         </div>
       </el-card>
       <div>
-        <p class="tip">汇率xx秒后更新</p>
+        <p class="tip">
+          汇率
+          <el-tag type="danger">{{ time }}</el-tag>
+          秒后更新
+        </p>
       </div>
       <p class="tip">你付款的金额</p>
       <el-card>
@@ -42,8 +46,34 @@ import countrySelect from "@/components/countrySelect.vue";
 import countryShow from "@/components/countryShow.vue";
 import moneyShow from "@/components/moneyShow.vue";
 import { updateExchangeRate } from "@/utils/exchangeRate";
-const msg = ref("付款");
+// 倒计时
+const time = ref(15);
+// const countdownTime = 15000; // 15秒的倒计时（以毫秒为单位）
+let timeoutId;
+function startCountdown() {
+  let remainingTime = time.value + 1;
 
+  // 清除已有的定时器
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+  }
+
+  // 更新倒计时
+  function updateCountdown() {
+    remainingTime -= 1; // 每次减少1秒
+    time.value = remainingTime;
+    if (remainingTime <= 0) {
+      //   更新汇率
+    } else {
+      timeoutId = setTimeout(updateCountdown, 1000); // 每秒更新一次
+    }
+  }
+
+  // 启动倒计时
+  updateCountdown();
+}
+
+const msg = ref("付款");
 // 付款金额
 const amountInput = ref("");
 function changeAmountInput(val) {
@@ -74,6 +104,18 @@ watch([countryInput, outCountry], (newValue) => {
 watch([exchangeRate, amountInput], (newValue) => {
   let [rate, amount] = newValue;
   outAmount.value = rate * Number(amount);
+  if (rate && amount) {
+    time.value = 15;
+    startCountdown(time.value);
+  }
+});
+watch(time, (newValue) => {
+  if (newValue == 0) {
+    exchangeRate.value = updateExchangeRate(
+      countryInput.value,
+      outCountry.value
+    );
+  }
 });
 </script>
 <style lang="scss" scoped>
