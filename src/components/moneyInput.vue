@@ -84,7 +84,7 @@ function formatterAmount(value) {
     cursor: default;
     .el-input__inner {
       color: black;
-      font-size: 30px;
+      font-size: 25px;
       font-weight: 500;
       height: 100%;
     }
