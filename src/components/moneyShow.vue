@@ -5,7 +5,7 @@
   </div>
 </template>
 <script setup>
-import { ref, defineProps, toRefs } from "vue";
+import { ref, defineProps, toRefs, watch } from "vue";
 import { formatterAmount } from "@/utils/exchangeRate";
 const props = defineProps({
   amount: Number
@@ -14,7 +14,15 @@ let { amount } = toRefs(props);
 // 单位
 const unit = ref("");
 const showAmount = ref("");
-showAmount.value = formatterAmount(String(amount.value));
+watch(
+  amount,
+  (newValue) => {
+    showAmount.value = formatterAmount(String(newValue));
+    changeUnit(newValue);
+  },
+  { immediate: true }
+);
+
 // 改变单位函数;
 function changeUnit(numericValue) {
   if (numericValue >= 10000000) {

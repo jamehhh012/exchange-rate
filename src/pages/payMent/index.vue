@@ -20,9 +20,9 @@
       <p class="tip">你付款的金额</p>
       <el-card>
         <div class="user-money-input">
-          <!-- 国家下拉框 -->
+          <!-- 国家展示框 -->
           <countryShow :outCountry="outCountry"></countryShow>
-          <!-- 金额输入框组件 -->
+          <!-- 金额展示框组件 -->
           <moneyShow :amount="outAmount"></moneyShow>
         </div>
       </el-card>
@@ -36,11 +36,12 @@ export default {
 };
 </script>
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import moneyInput from "@/components/moneyInput.vue";
 import countrySelect from "@/components/countrySelect.vue";
 import countryShow from "@/components/countryShow.vue";
 import moneyShow from "@/components/moneyShow.vue";
+import { updateExchangeRate } from "@/utils/exchangeRate";
 const msg = ref("付款");
 
 // 付款金额
@@ -53,9 +54,6 @@ const countryInput = ref("");
 function changeCountry(val) {
   countryInput.value = val;
 }
-// 监听国家变化,变化就更新汇率
-let exchangeRate = ref(0);
-console.log(exchangeRate);
 
 // 虚拟数据
 let outCountry = reactive({
@@ -64,8 +62,19 @@ let outCountry = reactive({
   ChineseLabel: "美元",
   value: "USD"
 });
-let outAmount = ref(1562.2);
-console.log(outAmount);
+let outAmount = ref(0);
+
+// 监听国家变化,变化就更新汇率
+let exchangeRate = ref(0);
+watch([countryInput, outCountry], (newValue) => {
+  let [firstCountry, secondCountry] = newValue;
+  exchangeRate.value = updateExchangeRate(firstCountry, secondCountry.value);
+});
+// 输入金额变化,汇率变化 都要重新计算输出的金额
+watch([exchangeRate, amountInput], (newValue) => {
+  let [rate, amount] = newValue;
+  outAmount.value = rate * Number(amount);
+});
 </script>
 <style lang="scss" scoped>
 h3 {
