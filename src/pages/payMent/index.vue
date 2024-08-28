@@ -46,18 +46,8 @@
               </template>
             </el-select>
           </div>
-          <div class="user-money-count">
-            <el-input
-              class="inputDeep"
-              v-model="input"
-              style="width: 240px"
-              placeholder="输入金额"
-              :formatter="
-                (value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-              "
-              :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"
-            />
-          </div>
+          <!-- 金额输入框组件 -->
+          <moneyInput @changeInput="changeAmountInput"></moneyInput>
         </div>
       </el-card>
       <div>
@@ -104,18 +94,6 @@
               </template>
             </el-select>
           </div>
-          <div class="user-money-count">
-            <el-input
-              class="inputDeep"
-              v-model="input"
-              style="width: 240px"
-              placeholder="输入金额"
-              :formatter="
-                (value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-              "
-              :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"
-            />
-          </div>
         </div>
       </el-card>
     </el-card>
@@ -129,11 +107,15 @@ export default {
 </script>
 <script setup>
 import { reactive, ref } from "vue";
-
+import moneyInput from "@/components/moneyInput.vue";
 const msg = ref("付款");
-const input = ref("");
-// chooseCountry
-// const input = ref("");
+
+// 付款金额
+const amountInput = ref("");
+function changeAmountInput(val) {
+  console.log("222", val);
+  amountInput.value = val;
+}
 // 颜色相关
 const chooseCountry = reactive({});
 const colors = [
@@ -171,6 +153,7 @@ h3 {
     color: #606266;
   }
   .user-money-input {
+    position: relative;
     display: flex;
     height: 70px;
     align-items: center;
@@ -198,19 +181,6 @@ h3 {
   align-items: center;
 }
 
-.inputDeep {
-  :deep(.el-input__wrapper) {
-    box-shadow: 0 0 0 0px var(--el-input-border-color, var(--el-border-color))
-      inset;
-    cursor: default;
-    .el-input__inner {
-      color: black;
-      font-size: 30px;
-      font-weight: 500;
-      height: 100%;
-    }
-  }
-}
 // 选择框
 .selectDeep {
   :deep(.el-select__wrapper) {
