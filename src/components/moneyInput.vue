@@ -6,13 +6,14 @@
       v-model="amountInput"
       style="width: 240px"
       placeholder="输入金额"
-      :formatter="formatterAmount"
+      :formatter="formatterContent"
       :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"
     />
   </div>
 </template>
 <script setup>
 import { ref, watch, defineEmits } from "vue";
+import { formatterAmount } from "@/utils/exchangeRate";
 const amountInput = ref("");
 const emit = defineEmits(["changeInput"]);
 // 单位
@@ -50,26 +51,11 @@ watch(amountInput, (newValue, oldValue) => {
     changeUnit(newValue);
   }
 });
-function formatterAmount(value) {
+function formatterContent(value) {
   let num = value.replace(/\$\s?|(,*)/g, "");
   if (num >= 100000000) value = oldAmount.value;
-  // 限制只能填入数字
-  value = value.replace(/[^0-9.]/g, "");
-
-  // 如果以小数点开头，补充0
-  if (/^\.$/.test(value)) {
-    value = "0" + value;
-  }
-  // 移除前导零（对于整数部分），确保结果符合要求
-  value = value.replace(/^0+(?=\d)/, "");
-  // 对数字进行千分位分割
-  value = `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  //多个小数点只取第一个
-  value = value.replace(/\.{2,}/g, ".");
-  value = value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
-  // 限制小数点后最多两位
-  value = value.replace(/(\.\d{2})\d+/, "$1");
-  return value;
+  //   格式化
+  return formatterAmount(value);
 }
 </script>
 

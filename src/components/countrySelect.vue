@@ -7,15 +7,8 @@
       placeholder="搜索/选择货币"
       @change="changeCountry"
     >
-      <template #label="item">
-        <div class="user-money-country-content">
-          <el-image
-            style="width: 50px; height: 50px; margin-right: 15px"
-            :src="chooseCountry.src"
-            fit="fill"
-          />
-          <span class="user-money-country-text"> {{ item.label }}</span>
-        </div>
+      <template #label>
+        <countryShow :outCountry="chooseCountry"></countryShow>
       </template>
       <template #header>全部账户 </template>
       <el-option
@@ -46,8 +39,9 @@
   </div>
 </template>
 <script setup>
-import { reactive } from "vue";
-// 颜色相关
+import { reactive, defineEmits } from "vue";
+import countryShow from "@/components/countryShow.vue";
+// 国家选择
 const chooseCountry = reactive({});
 const accountArr = [
   {
@@ -81,9 +75,13 @@ const accountArr = [
   }
 ];
 
-function changeCountry(value) {
-  chooseCountry.src = value.src;
+function changeCountry(item) {
+  chooseCountry.src = item.src;
+  chooseCountry.EnglishLabel = item.EnglishLabel;
+  emit("changeInput", item.value);
 }
+
+const emit = defineEmits(["changeInput"]);
 </script>
 <style lang="scss" scoped>
 .user-money-country {
